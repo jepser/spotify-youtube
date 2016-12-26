@@ -2,7 +2,7 @@
   <div class="youtube">
     <div class="youtube__container">
       <ul class="youtube__list">
-        <li class="song" v-for="(i, song) in songs">
+        <li class="song" v-for="(song, i) in songs">
           <a class="song__delete"></a>
           <div class="song__image">
             <img v-bind:src="song.track.album.images[2].url" :alt="song.track.name">
@@ -11,18 +11,14 @@
             <div class="song__title">{{ song.track.name }}</div>
             <span class="song__album"><span class="song__label">Album: </span> {{ song.track.album.name }}</span>
             <div class="song__artists">
-              
-            </div>
-            <div class="song__artists">
               <span class="song__label">Artist: </span>
-              <span class="song__artist" v-for="(i, artist) in song.track.artists">
-                {{ artist.name }}
+              <span class="song__artist">
+                {{ getArtists(song.track.artists) }}
               </span>
             </div>
           </div>
-          <ul class="song__youtube" >
-            <!-- {{ videos[song.track.id] }} -->
-            <li class="video" v-for="video in videos[song.track.id]">
+          <ul :class="{ 'song__youtube': true, 'is-visible' : song.videos.length > 0 }" >
+            <li class="video" v-for="video in song.videos">
               <input type="radio" v-model="v[song.track.id]" :value="video.id">
               <a href="" class="video__link">
                 <img v-bind:src="video.thumbnail" :alt="video.title" class="video__image">
@@ -34,7 +30,7 @@
       </ul>
     </div>
     <a class="youtube__search" v-on:click="searchOnYoutube" v-bind:class="{ 'is-visible': songs != undefined && songs.length > 0 && !searched }">Search on Youtube</a>
-    <a v-bind:class="{ 'is-visible': searched }" class="playlist__create">Create Playlist</a>
+    <a v-bind:class="{ 'is-visible': searched }" class="youtube__create" v-on:click="createPlaylist">Create Playlist</a>
   </div>
 </template>
 
@@ -51,7 +47,7 @@ export default {
       searched: false,
     }
   },
-  ready () {
+  mounted () {
   },
   watch: {
     search (val) {
@@ -60,33 +56,38 @@ export default {
         this.searchOnYoutube()
       }
     },
+    v (val) {
+      console.log(val)
+    }
   },
   methods: {
     searchOnYoutube () {
-      console.log('searchOnYoutube')
       gapi.client.load('youtube', 'v3', this.searchSongs)
     },
     searchSongs () {
       gapi.client.setApiKey('AIzaSyDroJ4NHMwZJ7oG53CoRxpOOoa_jXweRJg')
-      console.log('searchSongs')
-      // this.searched = true
-      let youtubeVideos = {}
+
+      this.searched = true
 
       this.songs.forEach((v, i) => {
         let request = gapi.client.youtube.search.list({
           q: v.track.name + ' ' + v.track.artists[0].name,
-          part: 'snippet'
+          part: 'snippet',
+          type: 'video'
         })
 
-        request.execute((response) => {
-          youtubeVideos[v.track.id] = this.searchSong(response)
+        return request.execute((response) => {
+          v.videos = this.searchSong(response)
         })
 
       })
-      console.log(youtubeVideos, 'searchSongs')
-      this.videos = youtubeVideos
-      return this.videos
-      
+    },
+    getArtists(artists) {
+      const artistNames = artists.map((artist) => {
+        return artist.name
+      })
+
+      return artistNames.join(', ')
     },
     searchSong (videos, songIndex) {
 
@@ -99,6 +100,10 @@ export default {
             }
         })
       }
+    },
+    createPlaylist () {
+      console.log(this.v)
+
     }
   }
 }
@@ -175,8 +180,12 @@ export default {
       padding: 20px 0 0;
       border-top: 4px solid $green;
       margin-top: 20px;
+      display: none;
       li {
         list-style: none;
+      }
+      &.is-visible {
+        display: block;
       }
     }
   }

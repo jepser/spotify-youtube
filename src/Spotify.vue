@@ -7,12 +7,12 @@
           <select name="" id="" v-on:change="searchSongs" v-model="selectedPlaylist">
             <option v-if="!playlists" value="0">Loading...</option>
             <option value="0">Select your playlist</option>
-            <option v-for="playlist in playlists.items" v-bind:value="{ id: playlist.id, owner: playlist.owner.id }">{{ playlist.name }}</option>
+            <option v-for="playlist in playlists" v-bind:value="{ id: playlist.id, owner: playlist.owner.id }">{{ playlist.name }}</option>
           </select>
         </div>
       </div>
     </div>
-    <youtube :songs="songs.items"></youtube>
+    <youtube :songs="songs"></youtube>
   </div>
 </template>
 
@@ -55,7 +55,7 @@ export default {
       search: false
     }
   },
-  ready () {
+  mounted () {
     this.getPlaylists()
     this.setUserInfo()
   },
@@ -72,19 +72,24 @@ export default {
       },
       getPlaylists (page) {
         return this.callApi('/me/playlists?limit=50').then((response) => {
-          this.playlists = JSON.parse(response.body)
+          this.playlists = response.body.items
         }, (response) => {
-          console.log(this.$router.go('/'))
+          this.$router.go('/')
         })
       },
       setUserInfo () {
         return this.callApi('/me').then((response) => {
-          this.userInfo = JSON.parse(response.body)
+          this.userInfo = response.body
         })
       },
       searchSongs () {
         return this.callApi('/users/' + this.selectedPlaylist.owner + '/playlists/' + this.selectedPlaylist.id + '/tracks').then((response) => {
-          this.songs = JSON.parse(response.body)
+          this.songs = response.body.items.map((song) => {
+            return {
+              ...song,
+              videos: []
+            }
+          })
           this.loadedSongs = true
         })
       }
