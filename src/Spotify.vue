@@ -1,16 +1,19 @@
 <template>
-  <div class="spotify">
-    <div class="spotify__container">
-      <h3>Awesome {{ userInfo.display_name }}, now select the playlist you want to export</h3>
-      <select name="" id="" v-on:change="searchSongs" v-model="selectedPlaylist">
-        <option v-if="!playlists" value="0">Loading...</option>
-        <option v-for="playlist in playlists.items" v-bind:value="{ id: playlist.id, owner: playlist.owner.id }">{{ playlist.name }}</option>
-      </select>
-      <a href="" v-on:click="activateSearch" class="button button--youtube">Search on youtube</a>
-      <!-- <a v-on:click="loginSpotify" class="button button-green">Login to Spotify</a> -->
+  <div>
+    <div v-bind:class="{ spotify: true, 'is-selected': loadedSongs }">
+      <div class="spotify__container">
+        <div class="spotify__text">
+          <h3>Awesome {{ userInfo.display_name }}, <br> now select the playlist you want to export</h3>
+          <select name="" id="" v-on:change="searchSongs" v-model="selectedPlaylist">
+            <option v-if="!playlists" value="0">Loading...</option>
+            <option value="0">Select your playlist</option>
+            <option v-for="playlist in playlists.items" v-bind:value="{ id: playlist.id, owner: playlist.owner.id }">{{ playlist.name }}</option>
+          </select>
+        </div>
+      </div>
     </div>
+    <youtube :songs="songs.items"></youtube>
   </div>
-  <youtube :songs="songs.items" :search.sync="search"></youtube>
 </template>
 
 <script>
@@ -40,15 +43,15 @@ export default {
     return {
       token () {
         var hash = getHashParams()
-        return hash.access_token
+        return hash.access_token || null
       },
-      playlists: false,
+      playlists: [],
       songs: [],
       currentPage: 1,
       userInfo : {},
       loadedSongs: false,
       apiUrl: 'https://api.spotify.com/v1',
-      selectedPlaylist: '',
+      selectedPlaylist: 0,
       search: false
     }
   },
@@ -68,7 +71,7 @@ export default {
         return this.$http.get(requestUrl, options)
       },
       getPlaylists (page) {
-        return this.callApi('/me/playlists').then((response) => {
+        return this.callApi('/me/playlists?limit=50').then((response) => {
           this.playlists = JSON.parse(response.body)
         }, (response) => {
           console.log(this.$router.go('/'))
@@ -82,12 +85,8 @@ export default {
       searchSongs () {
         return this.callApi('/users/' + this.selectedPlaylist.owner + '/playlists/' + this.selectedPlaylist.id + '/tracks').then((response) => {
           this.songs = JSON.parse(response.body)
+          this.loadedSongs = true
         })
-      },
-      activateSearch (e) {
-        e.preventDefault()
-
-        this.search = true
       }
   }
 }
@@ -98,11 +97,29 @@ export default {
   .spotify {
     background-color: $green;
     padding: 1px;
-    // min-height: 100vh;
+    @include vertical-container;
+    height: 100vh;
+    width: 100%;
+    transition: height .6s ease-out;
     &__container {
-      max-width: 600px;
+      @include vertical-text;
+    }
+    &__text {
+      max-width: $container-width;
       width: 100%;
+      text-align: center;
       margin: 0 auto;
+      padding: 40px;
+    }
+    h3 {
+      border-bottom: 4px solid;
+      padding: 0 0 20px;
+      margin: 0 0 40px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    &.is-selected {
+      height: 220px;
     }
   }
 </style>

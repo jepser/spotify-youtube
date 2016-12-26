@@ -13,23 +13,28 @@ Vue.use(VueRouter)
 //   components: { App}
 // })
 
-var AppRoot = Vue.extend({})
+const AppRoot = Vue.extend({})
 
-var router = new VueRouter({
-  history: true,
-  html5: true
-})
-
-router.map({
-  '/': {
-    component: App
+const routes = [
+  { 
+    path: '/',
+    component: App 
   },
-  '/spotify': {
+  {
+    path: '/spotify',
     component: Spotify
   }
-  // '/youtube': {
+]
 
-// }
+const router = new VueRouter({
+  routes,
+  mode: 'history'
 })
 
-router.start(AppRoot, '#app-index')
+const app = new Vue({
+  router
+}).$mount('#app-index')
+
+// router.start(AppRoot, '#app-index')
+
+

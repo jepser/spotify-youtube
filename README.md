@@ -1,6 +1,6 @@
-# spotify-react
+# React Spotify to Youtube Playlists Converter
 
-> A Vue.js project
+> A project created with Vue.js.
 
 ## Build Setup
 

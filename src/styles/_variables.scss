@@ -2,6 +2,8 @@ $gray: #111;
 $white: #FFF;
 $green: #2ebd59;
 $black: #000;
+$red: #CC181E;
+$container-width: 600px;
 
 @mixin clear {
 	&::after {
@@ -11,4 +13,15 @@ $black: #000;
 		width: 100%;
 		clear: both;
 	}
+}
+
+@mixin vertical-container {
+    display: table;
+    width: inherit;
+    height: inherit;
+}
+
+@mixin vertical-text {
+    display: table-cell;
+    vertical-align: middle;
 }
