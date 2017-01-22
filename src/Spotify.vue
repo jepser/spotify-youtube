@@ -7,12 +7,12 @@
           <select name="" id="" v-on:change="searchSongs" v-model="selectedPlaylist">
             <option v-if="!playlists" value="0">Loading...</option>
             <option value="0">Select your playlist</option>
-            <option v-for="playlist in playlists" v-bind:value="{ id: playlist.id, owner: playlist.owner.id }">{{ playlist.name }}</option>
+            <option v-for="playlist in playlists" v-bind:value="{ id: playlist.id, owner: playlist.owner.id, name: playlist.name }">{{ playlist.name }}</option>
           </select>
         </div>
       </div>
     </div>
-    <youtube :songs="songs"></youtube>
+    <youtube :songs="songs" :title="playlistTitle" :search="search"></youtube>
   </div>
 </template>
 
@@ -47,12 +47,14 @@ export default {
       },
       playlists: [],
       songs: [],
+      playlistTitle: '',
       currentPage: 1,
       userInfo : {},
       loadedSongs: false,
       apiUrl: 'https://api.spotify.com/v1',
       selectedPlaylist: 0,
-      search: false
+      search: false,
+      youtubePlaylist: {},
     }
   },
   mounted () {
@@ -74,7 +76,7 @@ export default {
         return this.callApi('/me/playlists?limit=50').then((response) => {
           this.playlists = response.body.items
         }, (response) => {
-          this.$router.go('/')
+          this.$router.push('/')
         })
       },
       setUserInfo () {
@@ -83,6 +85,8 @@ export default {
         })
       },
       searchSongs () {
+        this.playlistTitle = this.selectedPlaylist.name
+        // this.search = true
         return this.callApi('/users/' + this.selectedPlaylist.owner + '/playlists/' + this.selectedPlaylist.id + '/tracks').then((response) => {
           this.songs = response.body.items.map((song) => {
             return {

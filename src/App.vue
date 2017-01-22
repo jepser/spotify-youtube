@@ -2,6 +2,7 @@
   <div id="app" class="intro">
     <div class="intro__content">
       <div class="intro__text">
+          <a href="http://jepser.com?ref=spotify-youtube">
           <svg width="62px" height="72px" viewBox="0 0 62 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <defs></defs>
             <g id="jepser-logo-container" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -20,9 +21,11 @@
                 </g>
             </g>
         </svg>
+        </a>
         <p class="intro__presented">Presented by <br>Jepser Bernardino</p>
-        <h3 class="intro__title">Convert Spotify to Youtube playlists</h3>
-        <a v-on:click="loginSpotify" class="button button--green intro__login">Login to Spotify</a>
+        <h3 class="intro__title">Convert your Spotify to Youtube playlists</h3>
+        <a v-on:click="loginSpotify" class="button button--green intro__login">Start creating</a>
+        <p class="intro__description">I created it for the fun of having a tool for parties, convert yours. Is free ;)</p>
       </div>
     </div>
   </div>
@@ -65,17 +68,6 @@ export default {
 <style lang="sass">
 @import 'styles/variables';
 
-html {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-body {
-  @extend html;
-  font-family: 'Roboto Condensed', sans-serif;
-  background-color: $gray;
-  color: $white;
-}
 .button {
   padding: 20px 50px;
   text-align: center;
@@ -117,6 +109,10 @@ body {
     border-top: 2px solid $white;
     margin: 30px 0;
     padding: 20px 0;
+  }
+  &__description {
+    font-size: 13px;
+    margin: 30px 0 0;
   }
   &__login {
   }

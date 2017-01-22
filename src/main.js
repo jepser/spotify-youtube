@@ -16,9 +16,9 @@ Vue.use(VueRouter)
 const AppRoot = Vue.extend({})
 
 const routes = [
-  { 
+  {
     path: '/',
-    component: App 
+    component: App
   },
   {
     path: '/spotify',
@@ -34,7 +34,4 @@ const router = new VueRouter({
 const app = new Vue({
   router
 }).$mount('#app-index')
-
-// router.start(AppRoot, '#app-index')
-
 
