@@ -8,11 +8,6 @@ import Spotify from './Spotify.vue'
 Vue.use(VueResource)
 Vue.use(VueRouter)
 
-// var app = new Vue({
-//   el: 'body',
-//   components: { App}
-// })
-
 const AppRoot = Vue.extend({})
 
 const routes = [
