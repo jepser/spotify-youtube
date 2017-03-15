@@ -70,15 +70,26 @@ export default {
           this.userInfo = response.body
         })
       },
+      parseSong (song) {
+        const { track } = song
+        const imagesInAlbum = track.album.images.length
+
+        return {
+          name: track.name,
+          album : track.album.name,
+          artists: track.artists.map((artist) => {
+            return artist.name
+          }),
+          image: (imagesInAlbum > 0) ? track.album.images[imagesInAlbum - 1].url : '',
+          videos: []
+        }
+      },
       searchSongs () {
         this.playlistTitle = this.selectedPlaylist.name
         // this.search = true
         return this.callApi('/users/' + this.selectedPlaylist.owner + '/playlists/' + this.selectedPlaylist.id + '/tracks').then((response) => {
           this.songs = response.body.items.map((song) => {
-            return {
-              ...song,
-              videos: []
-            }
+            return this.parseSong(song)
           })
           this.loadedSongs = true
         })
