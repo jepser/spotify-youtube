@@ -5,16 +5,15 @@
         <li class="song" v-for="(song, i) in songs">
           <a class="song__delete" v-on:click.prevent="removeSong(i, $event)">×</a>
           <div class="song__image">
-            <img v-bind:src="song.track.album.images[2].url" :alt="song.track.name">
-            }
+            <img v-bind:src="song.image" :alt="song.name">
           </div>
           <div class="song__details">
-            <div class="song__title">{{ song.track.name }}</div>
-            <span class="song__album"><span class="song__label">Album: </span> {{ song.track.album.name }}</span>
+            <div class="song__title">{{ song.name }}</div>
+            <span class="song__album"><span class="song__label">Album: </span> {{ song.album }}</span>
             <div class="song__artists">
               <span class="song__label">Artist: </span>
               <span class="song__artist">
-                {{ getArtists(song.track.artists) }}
+                {{ song.artists.join(', ') }}
               </span>
             </div>
           </div>
