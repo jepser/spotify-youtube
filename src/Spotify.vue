@@ -5,7 +5,7 @@
         <div class="spotify__text">
           <h3>Awesome {{ userInfo.display_name }}, <br> now select the playlist you want to export</h3>
           <select name="" id="" v-on:change="searchSongs" v-model="selectedPlaylist">
-            <option v-if="!playlists" value="0">Loading...</option>
+            <option v-if="playlists.length == 0" value="0">Loading...</option>
             <option value="0">Select your playlist</option>
             <option v-for="playlist in playlists" v-bind:value="{ id: playlist.id, owner: playlist.owner.id, name: playlist.name }">{{ playlist.name }}</option>
           </select>
@@ -18,21 +18,7 @@
 
 <script>
 
-function getHashParams() {
-
-    var hashParams = {};
-    var e,
-        a = /\+/g,  // Regex for replacing addition symbol with a space
-        r = /([^&;=]+)=?([^&;]*)/g,
-        d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
-        q = window.location.hash.substring(1);
-
-    while (e = r.exec(q))
-       hashParams[d(e[1])] = d(e[2]);
-
-    return hashParams;
-}
-
+import { getHashParams } from './scripts/utils'
 import Youtube from './Youtube.vue'
 
 export default {
@@ -103,32 +89,5 @@ export default {
 
 <style lang="sass">
   @import 'styles/variables';
-  .spotify {
-    background-color: $green;
-    padding: 1px;
-    @include vertical-container;
-    height: 100vh;
-    width: 100%;
-    transition: height .6s ease-out;
-    &__container {
-      @include vertical-text;
-    }
-    &__text {
-      max-width: $container-width;
-      width: 100%;
-      text-align: center;
-      margin: 0 auto;
-      padding: 40px;
-    }
-    h3 {
-      border-bottom: 4px solid;
-      padding: 0 0 20px;
-      margin: 0 0 40px;
-      font-weight: 400;
-      line-height: 1.5;
-    }
-    &.is-selected {
-      height: 220px;
-    }
-  }
+  @import 'styles/spotify';
 </style>

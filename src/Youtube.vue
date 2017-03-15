@@ -6,6 +6,7 @@
           <a class="song__delete" v-on:click.prevent="removeSong(i, $event)">×</a>
           <div class="song__image">
             <img v-bind:src="song.track.album.images[2].url" :alt="song.track.name">
+            }
           </div>
           <div class="song__details">
             <div class="song__title">{{ song.track.name }}</div>
@@ -29,11 +30,11 @@
         </li>
       </ul>
     </div>
-    <a class="youtube__search" v-on:click="searchOnYoutube" v-bind:class="{ 'is-visible': songs != undefined && songs.length > 0 && !searched }">{{ (searching) ? 'Searching...' : 'Search on Youtube' }}</a>
-    <div v-bind:class="{ 'is-visible': searched, 'youtube__create': true }">
+    <a class="youtube__search" v-on:click="searchOnYoutube" v-bind:class="{ 'is-visible': songs != undefined && songs.length > 0 && !state.searched }">{{ (state.searching) ? 'Searching...' : 'Search on Youtube' }}</a>
+    <div v-bind:class="{ 'is-visible': state.searched, 'youtube__create': true }">
       <div class="create">
         <a class="create__link" v-on:click="createPlaylist">Create Playlist</a>
-        <form v-if="create" v-on:submit.prevent="submitPlaylist">
+        <form v-if="state.create" v-on:submit.prevent="submitPlaylist">
           <label for="playlist-name">Playlist name</label>
           <input type="text" class="create__name" v-model="playlist['name']" id="playlist-name">
           <p>{{ songs.length }} {{ songs.length == 1 ? 'song' : 'songs'  }} will be exported.</p>
@@ -60,12 +61,14 @@ export default {
     return {
       videos: {},
       v: [],
-      searched: false,
-      searching: false,
-      creating: false,
-      exporting: false,
-      exported: false,
-      create: false,
+      state: {
+        searched: false,
+        searching: false,
+        create: false,
+        creating: false,
+        exporting: false,
+        exported: false,
+      },
       playlistId: 0,
       songsExported: 1,
       playlist : {
@@ -79,21 +82,21 @@ export default {
   },
   watch: {
     songs (val) {
-      this.searched = false
+      this.state.searched = false
       return val
     },
-    exported(val) {
-      if (val == true) {
-        console.log('exported playlist')
-        // window.location = 
-      }
-    }
+    // exported(val) {
+    //   if (val == true) {
+    //     console.log('exported playlist')
+    //     // window.location = 
+    //   }
+    // }
   },
   methods: {
     searchOnYoutube () {
       gapi.client.load('youtube', 'v3', this.searchSongs)
       this.playlist.name = this.title
-      this.searching = true
+      this.state.searching = true
     },
     searchSongs () {
       gapi.client.setApiKey('AIzaSyDroJ4NHMwZJ7oG53CoRxpOOoa_jXweRJg')
@@ -114,8 +117,8 @@ export default {
 
       })
 
-      this.searched = true
-      this.searching = false
+      this.state.searched = true
+      this.state.searching = false
 
     },
     getArtists(artists) {
@@ -152,7 +155,7 @@ export default {
       })
     },
     createPlaylist() {
-      this.create = true
+      this.state.create = true
     },
     submitPlaylist() {
       var request = gapi.client.youtube.playlists.insert({
@@ -212,175 +215,6 @@ export default {
 
 <style lang="sass">
   @import 'styles/variables';
-
-  @mixin button($bg, $color) {
-    background-color: $bg;
-    color: $color;
-    width: 100%;
-    padding: 12px;
-    display: block;
-    position: fixed;
-    bottom: -50px;
-    left: 0;
-    text-align: center;
-    transition: bottom .3s ease-out .6s;
-    &:hover {
-      cursor: pointer;
-    }
-    &.is-visible {
-      bottom: 0;
-    }
-  }
-  .youtube {
-    background-color: $white;
-    color: $black;
-    padding: 1px 0;
-    &__list {
-      margin: 0 auto 50px;
-      padding: 0;
-      max-width: $container-width;
-    }
-    &__search {
-      @include button($red, $white);
-    }
-    &__create {
-      position: fixed;
-      bottom: -50px;
-      left: 0;
-      width: 100%;
-      background-color: $gray;
-      color: $white;
-      transition: bottom .3s ease-out .6s;
-      &.is-visible {
-        bottom: 0;
-      }
-    }
-  }
-  .song {
-    list-style: none;
-    margin: 0;
-    padding: 20px;
-    border-bottom: 4px solid $green;
-    position: relative;
-    @include clear;
-    &__details {
-      margin-left: 84px;
-    }
-    &__title {
-      margin: 0 0 10px;
-    }
-    &__image {
-      float: left;
-      width: 64px;
-      height: 64px;
-    }
-    &__label {
-      text-transform: uppercase;
-    }
-    &__album {
-      font-size: 12px;
-      text-transform: uppercase;
-      margin: 0 0 5px;
-      display: inline-block;
-    }
-    &__artists {
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-    &__delete {
-      position: absolute;
-      right: 0;
-      top: 20px;
-      padding: 1px 7px;
-      background-color: #E1E1E1;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .3s ease;
-    }
-    &__youtube {
-      padding: 20px 0 0;
-      border-top: 4px solid $green;
-      margin-top: 20px;
-      display: none;
-      li {
-        list-style: none;
-      }
-      &.is-visible {
-        display: block;
-      }
-    }
-    &:hover {
-      .song__delete {
-        opacity: 1;
-        pointer-events: auto;
-      }
-    }
-  }
-  .video {
-    margin: 0 0 10px;
-    @include clear;
-    input {
-      float: left;
-      margin: 13px 10px 0 0;
-    }
-    &__link {
-      color: $gray;
-      text-decoration: none;
-      @include clear;
-    }
-    &__title {
-      line-height: 38px;
-    }
-    &__image {
-      width: 50px;
-      height: auto;
-      float: left;
-      margin: 0 10px 0 0;
-    }
-  }
-  .create {
-    &__link {
-      text-align: center;
-      padding: 12px 0;
-      display: block;
-    }
-    form {
-      border-top: 4px solid $white;
-      max-width: $container-width;
-      width: 100%;
-      margin: 0 auto 0;
-      padding: 30px 20px;
-      text-align: left;  
-    }
-    label {
-      font-size: 12px;
-      display: block;
-      margin-bottom: 5px;
-    }
-    &__link {
-      color: $white;
-      text-align: center;
-      display: block;
-    }
-    &__name {
-      border: none;
-      background-color: transparent;
-      border-bottom: 2px solid $white;
-      color: $white;
-      font-size: 18px;
-      width: 50%;
-      &:focus {
-        outline: none;
-      }
-    }
-    &__submit {
-      background-color: $white;
-      border: none;
-      color: $gray;
-      padding: 12px 20px;
-      font-size: 18px;
-      margin: 0 auto;
-    }
-  }
-
+  @import 'styles/mixins';
+  @import 'styles/youtube';
 </style>

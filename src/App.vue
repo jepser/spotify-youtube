@@ -22,7 +22,7 @@
             </g>
         </svg>
         </a>
-        <p class="intro__presented">Presented by <br>Jepser Bernardino</p>
+        <p class="intro__presented">Created by <br>Jepser Bernardino</p>
         <h3 class="intro__title">Convert your Spotify to Youtube playlists</h3>
         <a v-on:click="loginSpotify" class="button button--green intro__login">Start creating</a>
         <p class="intro__description">I created it for the fun of having a tool for parties, convert yours. Is free ;)</p>
@@ -33,14 +33,7 @@
 
 <script>
 
-var serialize = function(obj) {
-  var str = [];
-  for(var p in obj)
-    if (obj.hasOwnProperty(p)) {
-      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-    }
-  return str.join("&");
-}
+import serialize from './scripts/utils'
 
 export default {
   data () {
@@ -66,61 +59,6 @@ export default {
 </script>
 
 <style lang="sass">
-@import 'styles/variables';
-
-.button {
-  padding: 20px 50px;
-  text-align: center;
-  display: inline-block;
-  text-transform: uppercase;
-  font-weight: 300;
-  font-size: 22px;
-  &:hover {
-    cursor: pointer;
-  }
-  &--green {
-    background-color: $green;
-    color: $white;
-  }
-}
-.intro {
-  @include vertical-container;
-  height: 100vh;
-  width: 100%;
-  &__content {
-    @include vertical-text;
-  }
-  &__text {
-    text-align: center;
-    padding: 30px 0 0;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 600px;
-  }
-  &__presented {
-    font-size: 16px;
-    text-transform: uppercase;
-    font-weight: 300;
-  }
-  &__title {
-    font-size: 36px;
-    font-weight: 300;
-    border-bottom: 2px solid $white;
-    border-top: 2px solid $white;
-    margin: 30px 0;
-    padding: 20px 0;
-  }
-  &__description {
-    font-size: 13px;
-    margin: 30px 0 0;
-  }
-  &__login {
-  }
-  svg {
-    margin-top: -72px;
-    * {
-      stroke: $white;
-    }
-  }
-}
+  @import 'styles/variables';
+  @import 'styles/app';
 </style>
