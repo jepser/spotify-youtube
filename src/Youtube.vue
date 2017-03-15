@@ -101,8 +101,11 @@ export default {
       gapi.client.setApiKey('AIzaSyDroJ4NHMwZJ7oG53CoRxpOOoa_jXweRJg')
 
       this.songs.forEach((v, i) => {
+
+        if (v.artists.length == 0) return
+
         let request = gapi.client.youtube.search.list({
-          q: v.track.name + ' ' + v.track.artists[0].name,
+          q: v.name + ' ' + v.artists[0],
           part: 'snippet',
           type: 'video'
         })
