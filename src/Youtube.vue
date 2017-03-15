@@ -1,50 +1,57 @@
 <template>
-  <div class="youtube">
-    <div class="youtube__container">
-      <ul class="youtube__list">
-        <li class="song" v-for="(song, i) in songs">
-          <a class="song__delete" v-on:click.prevent="removeSong(i, $event)">×</a>
-          <div class="song__image">
-            <img v-bind:src="song.image" :alt="song.name">
-          </div>
-          <div class="song__details">
-            <div class="song__title">{{ song.name }}</div>
-            <span class="song__album"><span class="song__label">Album: </span> {{ song.album }}</span>
-            <div class="song__artists">
-              <span class="song__label">Artist: </span>
-              <span class="song__artist">
-                {{ song.artists.join(', ') }}
-              </span>
+  <div>
+    <div class="youtube" v-if="songs.length">
+      <div class="youtube__container">
+        <ul class="youtube__list">
+          <li class="song" v-for="(song, i) in songs">
+            <a class="song__delete" v-on:click.prevent="removeSong(i, $event)">×</a>
+            <div class="song__image">
+              <img v-bind:src="song.image" :alt="song.name">
             </div>
-          </div>
-          <ul :class="{ 'song__youtube': true, 'is-visible' : song.videos.length > 0 }" >
-            <li class="video" v-for="(video, videoIndex) in song.videos">
-              <input type="radio" v-model="v[i]" :id="video.id" :value="video.id">
-              <a href="" class="video__link">
-                <img v-bind:src="video.thumbnail" :alt="video.title" class="video__image">
-                <span class="video__title">{{ video.title }}</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
+            <div class="song__details">
+              <div class="song__title">{{ song.name }}</div>
+              <span class="song__album"><span class="song__label">Album: </span> {{ song.album }}</span>
+              <div class="song__artists">
+                <span class="song__label">Artist: </span>
+                <span class="song__artist">
+                  {{ song.artists.join(', ') }}
+                </span>
+              </div>
+            </div>
+            <ul :class="{ 'song__youtube': true, 'is-visible' : song.videos.length > 0 }" >
+              <li class="video" v-for="(video, videoIndex) in song.videos">
+                <input type="radio" v-model="v[i]" :id="video.id" :value="video.id">
+                <a :href="'https://www.youtube.com/watch?v=' + video.id" target="_blank" class="video__link">
+                  <img v-bind:src="video.thumbnail" :alt="video.title" class="video__image">
+                  <span class="video__title">{{ video.title }}</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </div>
-    <a class="youtube__search" v-on:click="searchOnYoutube" v-bind:class="{ 'is-visible': songs != undefined && songs.length > 0 && !state.searched }">{{ (state.searching) ? 'Searching...' : 'Search on Youtube' }}</a>
-    <div v-bind:class="{ 'is-visible': state.searched, 'youtube__create': true }">
+    <a class="action--search" v-on:click="searchOnYoutube" v-bind:class="{ 'is-visible': songs != undefined && songs.length > 0 && !state.searched }">{{ (state.searching) ? 'Searching...' : 'Search on Youtube' }}</a>
+    <div v-bind:class="{ 'is-visible': state.searched, 'action--create': true }">
       <div class="create">
-        <a class="create__link" v-on:click="createPlaylist">Create Playlist</a>
-        <form v-if="state.create" v-on:submit.prevent="submitPlaylist">
+        <form v-if="state.create && !state.exported" v-on:submit.prevent="submitPlaylist">
+          <a class="create__link" v-on:click="createPlaylist">Create Playlist</a>
           <label for="playlist-name">Playlist name</label>
           <input type="text" class="create__name" v-model="playlist['name']" id="playlist-name">
           <p>{{ songs.length }} {{ songs.length == 1 ? 'song' : 'songs'  }} will be exported.</p>
           <button class="create__submit">
             Let's do this!
-            <span v-bind:style="{ display: (exporting) ? 'block': 'none' }">{{ songsExported + '/' + songs.length }}</span>
+            <span v-bind:style="{ display: (state.exporting) ? 'inline-block': 'none' }">{{ songsExported + '/' + songs.length }}</span>
           </button>
         </form>
+        <div class="exported" v-if="state.exported">
+          <p>Awesome! Your new {{ playlist.title }} playlist is ready, <a :href="playlist.url">check it out!</a></p>
+          <p>Thanks for you using it, <a :href="'https://twitter.com/intent/tweet?text=I created a playlist from Spotify to Youtube, create yours!&hashtags=spotifty,youtube&url=' + encodeURIComponent('http://spotify-youtube.jepser.com')" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;" target="_blank">now spead the word :)</a></p>
+          <a v-on:click="startAgain" class="exported__button">Do you want to create another one?</a>
+        </div>
       </div>
     </div>
-    
+    </div>
   </div>
 </template>
 
@@ -83,13 +90,7 @@ export default {
     songs (val) {
       this.state.searched = false
       return val
-    },
-    // exported(val) {
-    //   if (val == true) {
-    //     console.log('exported playlist')
-    //     // window.location = 
-    //   }
-    // }
+    }
   },
   methods: {
     searchOnYoutube () {
@@ -123,12 +124,16 @@ export default {
       this.state.searching = false
 
     },
-    getArtists(artists) {
-      const artistNames = artists.map((artist) => {
-        return artist.name
-      })
-
-      return artistNames.join(', ')
+    startAgain () {
+      window.location.reload()
+      // this.state = {
+      //   searched: false,
+      //   searching: false,
+      //   create: false,
+      //   creating: false,
+      //   exporting: false,
+      //   exported: false,
+      // }
     },
     removeSong (index, e) {
       this.songs.splice(index, 1)
@@ -177,8 +182,9 @@ export default {
         var result = response.result
         if (result) {
           this.playlist.id = result.id
+          this.playlist.url = 'https://www.youtube.com/playlist?list=' + result.id
           this.addSongs(this.playlist.id, this.v, 0)
-          this.exporting = true
+          this.state.exporting = true
         } else {
           console.error('The is an error', response)
         }
@@ -206,8 +212,8 @@ export default {
           this.songsExported = index + 1
           this.addSongs(playlistId, songs, ++index)
         } else {
-          this.exporting = false
-          this.exported = true
+          this.state.exporting = false
+          this.state.exported = true
         }
       })
     }
@@ -219,4 +225,5 @@ export default {
   @import 'styles/variables';
   @import 'styles/mixins';
   @import 'styles/youtube';
+  @import 'styles/action';
 </style>
