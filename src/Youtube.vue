@@ -62,6 +62,8 @@
 
 <script>
 
+import tracking from  './scripts/tracking'
+
 export default {
   props: [
     'songs',

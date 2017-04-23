@@ -1,4 +1,4 @@
-export default tracking = {
+const tracking = {
   event: (eventObj) => {
     const event = Object.assign({}, {
       eventCategory: 'spotify-youtube',
@@ -16,3 +16,5 @@ export default tracking = {
     ga('send', 'event', eventCategory, eventAction, eventLabel, eventValue)
   }
 }
+
+export default tracking
