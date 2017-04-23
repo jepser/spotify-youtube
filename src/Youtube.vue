@@ -125,20 +125,18 @@ export default {
 
       })
 
+      tracking.event({
+        eventAction: 'search_youtube',
+        eventLabel: this.playlist.name,
+        eventValue: this.songs.length
+      })
+
       this.state.searched = true
       this.state.searching = false
 
     },
     startAgain () {
       window.location.reload()
-      // this.state = {
-      //   searched: false,
-      //   searching: false,
-      //   create: false,
-      //   creating: false,
-      //   exporting: false,
-      //   exported: false,
-      // }
     },
     removeSong (index, e) {
       this.songs.splice(index, 1)
@@ -168,6 +166,10 @@ export default {
     },
     createPlaylist() {
       this.state.create = true
+
+      tracking.event({
+        eventAction: 'create_start'
+      })
     },
     submitPlaylist() {
       var request = gapi.client.youtube.playlists.insert({
@@ -190,6 +192,12 @@ export default {
           this.playlist.url = 'https://www.youtube.com/playlist?list=' + result.id
           this.addSongs(this.playlist.id, this.v, 0)
           this.state.exporting = true
+
+          tracking.event({
+            eventAction: 'create_end',
+            eventLabel: this.playlist.name,
+            eventValue: result.id
+          })
         } else {
           console.error('The is an error', response)
         }

@@ -20,6 +20,7 @@
 
 import { getHashParams } from './scripts/utils'
 import Youtube from './Youtube.vue'
+import tracking from './scripts/tracking'
 
 export default {
   components: {
@@ -86,11 +87,18 @@ export default {
       },
       searchSongs () {
         this.playlistTitle = this.selectedPlaylist.name
-        // this.search = true
+
         return this.callApi('/users/' + this.selectedPlaylist.owner + '/playlists/' + this.selectedPlaylist.id + '/tracks').then((response) => {
           this.songs = response.body.items.map((song) => {
             return this.parseSong(song)
           })
+
+          tracking.event({
+            eventAction: 'select_playlist',
+            eventLabel: this.playlistTitle,
+            eventValue: this.songs.length
+          })
+
           this.loadedSongs = true
         })
       }

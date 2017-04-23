@@ -34,6 +34,7 @@
 <script>
 
 import { serialize } from './scripts/utils'
+import tracking from './scripts/tracking'
 
 export default {
   data () {
@@ -52,6 +53,9 @@ export default {
   },
   methods: {
       loginSpotify () {
+        tracking.event({
+          eventAction: 'register_spotify'
+        })
         window.location = this.spotifyLink()
       }
   }
