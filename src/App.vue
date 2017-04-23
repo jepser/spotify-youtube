@@ -33,7 +33,7 @@
 
 <script>
 
-import serialize from './scripts/utils'
+import { serialize } from './scripts/utils'
 
 export default {
   data () {

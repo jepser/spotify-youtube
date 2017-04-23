@@ -31,11 +31,16 @@
         </ul>
       </div>
     </div>
-    <a class="action--search" v-on:click="searchOnYoutube" v-bind:class="{ 'is-visible': songs != undefined && songs.length > 0 && !state.searched }">{{ (state.searching) ? 'Searching...' : 'Search on Youtube' }}</a>
+    <a
+      class="action--search"
+      v-on:click="searchOnYoutube"
+      v-bind:class="{ 'is-visible': songs != undefined && songs.length > 0 && !state.searched }">
+        {{ (state.searching) ? 'Searching...' : 'Search on Youtube' }}
+    </a>
     <div v-bind:class="{ 'is-visible': state.searched, 'action--create': true }">
       <div class="create">
+        <a class="create__link" v-on:click="createPlaylist">{{ state.exported ? 'Playlist created' : 'Create Playlist' }}</a>
         <form v-if="state.create && !state.exported" v-on:submit.prevent="submitPlaylist">
-          <a class="create__link" v-on:click="createPlaylist">Create Playlist</a>
           <label for="playlist-name">Playlist name</label>
           <input type="text" class="create__name" v-model="playlist['name']" id="playlist-name">
           <p>{{ songs.length }} {{ songs.length == 1 ? 'song' : 'songs'  }} will be exported.</p>

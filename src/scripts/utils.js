@@ -1,4 +1,4 @@
-const serialize = (obj) => {
+export const serialize = (obj) => {
   var str = []
   for (var p in obj) {
     if (obj.hasOwnProperty(p)) {
@@ -8,7 +8,7 @@ const serialize = (obj) => {
   return str.join('&')
 }
 
-const getHashParams = () => {
+export const getHashParams = () => {
   var hashParams = {}
   var e,
     a = /\+/g,  // Regex for replacing addition symbol with a space
@@ -21,9 +21,4 @@ const getHashParams = () => {
   }
 
   return hashParams
-}
-
-export default serialize
-export {
-    getHashParams
 }
